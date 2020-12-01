@@ -68,6 +68,8 @@ export default {
       listTop: 0,
       isPaused: false,
       isMovingBackwards: false,
+      lastItemIndex: 0,
+      originalListLength: 0
     }
   },
 
@@ -122,6 +124,7 @@ export default {
   // copy word list
   created() {
     this.list = this.words
+    this.originalListLength = this.list.length
   },
 
   // initiate animation
@@ -130,7 +133,7 @@ export default {
   },
 
   methods: {
-    updateState() {
+    async updateState() {
       // check if enough keywords or is not paused
       if (this.listCount <= this.rows) return
       if (this.isPaused) return
@@ -155,12 +158,8 @@ export default {
         }
       } else if (this.continous) {
         // continous animation
-        // BUG: current implmentation does not allow animation :(
-
-        if (this.listTop < this.rows * this.itemHeight - this.listHeight) {
-          this.listTop += this.itemHeight
-          this.list.push(this.list.shift())
-        }
+        this.list.push(this.list[this.lastItemIndex])
+        this.lastItemIndex++
       }
       // one way animation
       else if (this.listTop < this.rows * this.itemHeight - this.listHeight) {
